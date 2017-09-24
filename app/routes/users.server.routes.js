@@ -12,9 +12,11 @@ module.exports = function(app) {
       .get(users.renderRegister)
       .post(users.register);
 
-      app.route('/config')
-          .get(users.renderConfigura)
-          .post(users.updatePassword);
+  app.route('/config')
+            .get(users.renderConfigura)
+            .post(users.updatePassword);
+
+  app.route('/config2').post(users.updateMail);
 
   app.route('/login')
       .get(users.renderLogin)

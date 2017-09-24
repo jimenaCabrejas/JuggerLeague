@@ -11,14 +11,16 @@
 
     <link href="css/style.default.css" rel="stylesheet" id="theme-stylesheet">
     <link href="css/animate.css" rel="stylesheet">
-
-
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 </head>
 
 <body>
+
 <% include partials/cabecera %>
+<% if (tipo!=null) { %>
 <% include partials/barranav %>
+<% } %>
 
 
         <div class="col-md-9 clearfix" id="customer-account">
@@ -33,17 +35,18 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="password">Nueva contraseña</label>
-                                <input type="password" class="form-control" name="password_1" required>
+                                <label for="password_1" class="sr-only">Nueva contraseña</label>
+                                <input type="password"  id="password_1" class="form-control" name="password_1" required autofocus />
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="password_2">Repite nueva contraseña</label>
-                                <input type="password" class="form-control" name="password_2" required>
+                                <label for="password_2" class="sr-only">Repite nueva contraseña</label>
+                                <input type="password" class="form-control" id="password_2" name="password_2" required autofocus/>
                             </div>
                         </div>
                     </div>
+                    <br>
                     <!-- /.row -->
                     <div class="text-center">
                       <i class="fa fa-paper-planes"></i> <input type="button" class="btn btn-template-main" value="Guardar cambios" onclick="valida_envia()">
@@ -52,24 +55,113 @@
 
             </div>
             <!-- /.box -->
+            <div class="box">
+
+                <div class="heading">
+                    <h3 class="text-uppercase">Cambiar email</h3>
+                </div>
+
+                <form action="/config2" method="post" name="fvalidamail">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="mail">Nuevo email</label>
+                                <input type="email" class="form-control" name="mail_1" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="mail">Repite el nuevo email</label>
+                                <input type="email" class="form-control" name="mail_2" required>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.row -->
+                    <div class="text-center">
+                      <i class="fa fa-paper-planes"></i> <input type="button" class="btn btn-template-main" value="Guardar cambios" onclick="valida_mail()">
+                    </div>
+                </form>
+
+            </div>
 
             <script>
             function valida_envia(){
                	//valido el nombre
-               	if (document.fvalida.password_1.value !=document.fvalida.password_2.value){
-                    alert("Las dos contraseñas tienen que coincidir")
+                if(document.fvalida.password_1.value.length==0 || document.fvalida.password_2.value.length==0 ) {
+                  swal({
+                    text: "Rellena ambos campos",
+                    icon: "error",
+                  });
+                  return 0;
+                }
+
+                if (document.fvalida.password_1.value !=document.fvalida.password_2.value){
+                  swal({
+                    text: "Las dos contraseñas tienen que coincidir",
+                    icon: "error",
+                  });
+                  return 0;
+               	}
+
+               	//el formulario se envia
+                swal({
+                title: "¿Seguro que quieres actualizar la contraseña?",
+                icon: "warning",
+                buttons: ["Cancelar", "Continuar"],
+                dangerMode: true,
+              })
+              .then((willDelete) => {
+                if (willDelete) {
+                  document.fvalida.submit();
+
+                } else {
+                    return 0;
+                }
+              });
+            }
+            </script>
+
+            <script>
+            function valida_mail(){
+
+              if(document.fvalidamail.mail_1.value.length==0 || document.fvalidamail.mail_2.value.length==0 ) {
+                swal({
+                  text: "Rellena ambos campos",
+                  icon: "error",
+                });
+                return 0;
+              }
+               	//valido el nombre
+
+               	if (document.fvalidamail.mail_1.value !=document.fvalidamail.mail_2.value){
+                  swal({
+                    text: "Los dos emails tienen que coincidir",
+                    icon: "error",
+                  });
                   	return 0;
                	}
 
                	//el formulario se envia
-                if (confirm("¿Seguro que quieres actualizar la contraseña?") == true) {
-                  document.fvalida.submit();
+                  swal({
+                  title: "¿Seguro que quieres actualizar el email?",
+                  icon: "warning",
+                  buttons: ["Cancelar", "Continuar"],
+                  dangerMode: true,
+                })
+                .then((willDelete) => {
+                  if (willDelete) {
+                    document.fvalidamail.submit();
 
-                } else {
-                    return 0
-                   }
+                  } else {
+                      return 0;
+                  }
+                });
+
+
             }
+
             </script>
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

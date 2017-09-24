@@ -11,6 +11,7 @@ module.exports = function(app) {
 
   app.route('/compra/:compraId').get(shop.compra);
   app.route('/elimina/:compraId').get(shop.elimina);
+  app.route('/modifica/:compraId').post(shop.modifica);
   app.route('/add').post(shop.add);
 
 

@@ -1,5 +1,6 @@
 var User = require('mongoose').model('User'),
     passport = require('passport');
+var Shop = require('mongoose').model('Shop');
 
 var getErrorMessage = function(err) {
     var message = '';
@@ -63,30 +64,48 @@ exports.eliminaUser=function(req, res, next) {
 };
 
 exports.renderPerfil=function(req, res, next) {
-  User.find({}, null, {sort: { equipo: -1 }}, function(err, users) {
-      if (err) {
-          return next(err);
-      }
-      else {
-        if (req.user) {
-          res.render('index', {
-            title: 'JUGGERLEAGUE',
-            tipo: req.user ? req.user.tipo : '',
-            nombre: req.user ? req.user.username : '',
-            equipo: req.user ? req.user.equipo : '',
-            puntos: req.user ? req.user.puntos : '',
-            email: req.user ? req.user.email : '',
-              "data": users
-          });
+  var k=0;
+  var comprado=new Array();
+  Shop.find({}, function(err, shops) {
+    User.find({}, null, {sort: { equipo: -1 }}, function(err, users) {
+        if (err) {
+            return next(err);
         }
+        else {
+          if (req.user) {
+            for (var i = 0; i < shops.length; i++) {
+              for (var j = 0; j < req.user.compras.length; j++) {
+                if(req.user.compras[j].localeCompare(shops[i].producto)==0) {
+                  comprado[k]= shops[i];
+                  k++;
+                }
+              }
 
-      }
+            }
+            res.render('index', {
+              title: 'JUGGERLEAGUE',
+              tipo: req.user ? req.user.tipo : '',
+              nombre: req.user ? req.user.username : '',
+              equipo: req.user ? req.user.equipo : '',
+              puntos: req.user ? req.user.puntos : '',
+              creditos: req.user ? req.user.creditos : '',
+              comprado: comprado,
+              email: req.user ? req.user.email : '',
+                "data": users,
+                "tienda": shops
+            });
+          }
+
+        }
+    });
+
   });
+
 };
 exports.renderLogin = function(req, res, next) {
     if (!req.user) {
         res.render('login', {
-            title: 'Log-in Form',
+            title: 'Página de autenticación',
             messages: req.flash('error') || req.flash('info')
         });
     }
@@ -98,7 +117,7 @@ exports.renderLogin = function(req, res, next) {
 exports.renderRegister = function(req, res, next) {
     if (!req.user) {
         res.render('register', {
-            title: 'Register Form',
+            title: 'Página de registro',
             messages: req.flash('error')
         });
     }
@@ -110,8 +129,8 @@ exports.renderRegister = function(req, res, next) {
 exports.renderConfigura = function(req, res, next) {
     if (req.user) {
         res.render('configura', {
-            title: 'Configura Form',
-            tipo: req.user ? req.user.username : ''
+            title: 'Cambiar configuración',
+            tipo: req.user ? req.user.tipo : ''
         });
     }
     else {
@@ -165,6 +184,23 @@ exports.userByID = function(req, res, next, id) {
 exports.updatePassword = function (req, res, next) {
     var user = req.user;
     user.password = req.body.password_1;
+
+    user.save(function(err) {
+        if (err) {
+            var message = getErrorMessage(err);
+            req.flash('error', message);
+            return res.redirect('/config');
+        }
+        else {
+          return res.redirect('/perfil');
+
+        }
+  });
+};
+
+exports.updateMail = function (req, res, next) {
+    var user = req.user;
+    user.email = req.body.mail_1;
 
     user.save(function(err) {
         if (err) {

@@ -92,7 +92,11 @@
                                 <h3>PÁGINA DE PERFIL</h3>
                             </div>
                             <p class="lead">¡Hola, <%=nombre%>!</p>
-                        </div>
+
+
+
+
+                      </div>
                     </div>
 
                     <div class="row">
@@ -101,6 +105,7 @@
                                 <li><i class="fa fa-star"></i>Miembro de <%=equipo%></li>
                                 <li><i class="fa fa-envelope"></i>E-mail: <%=email%></li>
                                 <li><i class="fa fa-line-chart"></i>Puntuación de tu equipo: <%=puntos%></li>
+                                <li><i class="fa fa-money"></i>Créditos del equipo: <%=creditos%></li>
                             </ul>
                         </div>
 
@@ -109,6 +114,29 @@
                         </div>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="heading">
+                                <h4>COMPRAS</h4>
+                            </div>
+                            <p class="lead">Aquí puedes ver todas las cosas que has comprado:</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                      <% for(var i=0; i < comprado.length; i++) { %>
+                        <div class="col-md-3 col-sm-4">
+                            <div class="product">
+                      <div class="image">
+                          <a>
+                              <img src='img/<%=comprado[i].producto%>.jpg' alt="" class="img-responsive image1">
+                          </a>
+                      </div>
+                      <h2>  <%=comprado[i].producto%></h2>
+                    <% } %>
+                  </div>
+                </div>
+
+                  </div>
                     <div class="row">
                         <div class="col-md-9">
                             <div class="heading">

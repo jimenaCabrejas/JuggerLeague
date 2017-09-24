@@ -14,7 +14,9 @@ var UserSchema = new Schema({
     tipo: String,
     creditos: Number,
     puntos: Number,
-    compras: String,
+    compras: {
+      type: [String],
+    },
     provider: String,
     providerId: String,
     providerData: {},

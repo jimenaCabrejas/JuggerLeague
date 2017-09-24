@@ -11,14 +11,21 @@
 
     <link href="css/style.default.css" rel="stylesheet" id="theme-stylesheet">
     <link href="css/animate.css" rel="stylesheet">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
 
 <% include partials/cabecera %>
 <% include partials/barranav %>
+
+
+
 <% if ( tipo=="administrador" ) { %>
   <div class="container">
       <div class="row">
@@ -27,7 +34,7 @@
         </div>
       </div>
       <p class="text-muted lead text-center">
-        Como administrador puede añadir y eliminar productos de la tienda.
+        Como administrador puede añadir, modificar y eliminar productos de la tienda.
         </p>
         <div class="row products text-center">
           <a href="#" data-toggle="modal" data-target="#add-modal" class="btn btn-template-main"><i class="fa fa-plus"></i>Añadir producto</a>
@@ -36,7 +43,7 @@
         <div class="row products">
           <% for(var i=0; i < data.length; i++) { %>
 
-
+            <!-- image -->
             <div class="col-md-3 col-sm-4">
                 <div class="product">
                     <div class="image">
@@ -45,21 +52,30 @@
                         </a>
                     </div>
                     <!-- /.image -->
+                    <!-- text -->
+
                     <div class="text">
                         <h3><a href="#"><%=data[i].producto%></a></h3>
                         <p class="price"><%=data[i].precio%> créditos</p>
+                        <p class="price"> Nivel necesario: <%=data[i].nivel%></p>
+
                     </div>
                     <!-- /.text -->
-                    <% if ( nivel< data[i].nivel*100 ) { %>
-                    <div class="ribbon sale">
-                        <div class="theribbon">Nivel insuficiente</div>
-                        <div class="ribbon-background"></div>
-                    </div>
-                    <% }  else { %>
-
                         <a href='/elimina/<%=data[i]._id%>' class="btn btn-template-main"><i class="fa fa-trash"></i>Eliminar</a>
+                        <a href="#form<%=i%>" class="btn btn-template-main" data-toggle="collapse"><i class="fa fa-pencil-square-o"></i>Modificar </a>
 
-                        <% } %>
+                           <form id="form<%=i%>" class="collapse"  action="/modifica/<%=data[i]._id%>" method="post">
+                               <h4 class="form-signin-heading text-left">Modifica los datos del producto</h4>
+                               <p class="price"><%=data[i].producto%></p>
+                               <label for="precio" class="sr-only">Precio</label>
+                               <input type="text" id="precio" name="precio" class="form-control" placeholder="Precio" required autofocus>
+
+                               <label for="nivel" class="sr-only">Nivel</label>
+                               <input type="text" id="nivel" name="nivel" class="form-control" placeholder="Nivel mínimo" required>
+
+                               <button class="btn btn-lg btn-primary btn-block" type="submit">Modificar</button>
+                             </form>
+
 
                 </div>
                 <!-- /.product -->
@@ -83,12 +99,10 @@
         </div>
         <p class="text-muted lead text-center">
           En esta página podrás comprar todas las mejoras para tu robot. Gasta con cabeza, los créditos son limitados</br></br>
-          Tu crédito actual es <%=credito%>
+          Tu crédito actual es de <%=credito%>
           </p>
         <div class="row products">
           <% for(var i=0; i < data.length; i++) { %>
-
-
             <div class="col-md-3 col-sm-4">
                 <div class="product">
                     <div class="image">
@@ -108,14 +122,9 @@
                         <div class="ribbon-background"></div>
                     </div>
                     <% }  else { %>
-                      <% if ( credito> data[i].precio ) { %>
-
-                        <a href='/compra/<%=data[i]._id%>' class="btn btn-template-main"><i class="fa fa-shopping-cart"></i>Comprar</a>
-                      <% }  else { %>
-                        <a href="#" data-toggle="modal" data-target="#compra-modal" class="btn btn-template-main"><i class="fa fa-shopping-cart"></i>Comprar</a>
+                    <button class="btn btn-template-main" onclick="valida_envia('<%=data[i].producto%>','<%=JSON.stringify(compras)%>', '<%=data[i].precio%>', '<%=credito%>')"><i class="fa fa-shopping-cart"></i>Comprar</button>
 
                       <% } %>
-                        <% } %>
 
                 </div>
                 <!-- /.product -->
@@ -129,22 +138,6 @@
 <% } %>
 
 <!-- /#content -->
-
-<!-- *** COMPRA MODAL ***
-_________________________________________________________ -->
-
-<div class="modal fade" id="compra-modal" tabindex="-1" role="dialog" aria-labelledby="Contact" aria-hidden="true">
-    <div class="modal-dialog">
-
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="Contact">Créditos insuficientes</h4>
-            </div>
-
-        </div>
-    </div>
-</div>
 
 <!-- *** AÑADIR MODAL ***
 _________________________________________________________ -->
@@ -171,38 +164,33 @@ _________________________________________________________ -->
     </div>
 </div>
 
-<!-- *** MODIFICA MODAL ***
-_________________________________________________________ -->
+<script>
+function valida_envia(id, compras, precio, dinero){
+dinero=Number(dinero);
+precio=Number(precio);
+if(dinero<precio) {
+  swal({
+    text: "No tienes suficiente dinero",
+    icon: "error",
+  });
+  return 0;
+}
+else {
+var test= JSON.parse(compras);
+  for (var i = 0; i < test.length; i++) {
+    if(test[i].localeCompare(id)==0) {
+      swal({
+        text: "Ya has comprado este producto",
+        icon: "warning",
+      });
+         return 0;
+    }
+  }
+  location.href='/compra/'+id;
+}
+ }
 
-<div class="modal fade" id="modify-modal" tabindex="-1" role="dialog" aria-labelledby="Modifica" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-          <form class="form-modificaproducto" action="/modifica" method="post">
-              <h2 class="form-signin-heading text-center">Añadir nuevo producto</h2>
-
-              <label for="producto" class="sr-only">Producto</label>
-              <input type="text" id="producto" name="producto" class="form-control" placeholder="Nombre producto" required autofocus>
-
-              <label for="precio" class="sr-only">Precio</label>
-              <input type="text" id="precio" name="precio" class="form-control" placeholder="Precio" required autofocus>
-
-              <label for="nivel" class="sr-only">Nivel</label>
-              <input type="text" id="nivel" name="nivel" class="form-control" placeholder="Nivel mínimo" required>
-
-              <button class="btn btn-lg btn-primary btn-block" type="submit">Añadir</button>
-            </form>
-
-        </div>
-    </div>
-</div>
-
-
-
-
-
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</script>
 
 </body>
 </html>

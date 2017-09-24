@@ -15,20 +15,17 @@ exports.list = function(req, res, next) {
 
 exports.compra=function(req, res, next) {
  var compra=req.params.compraId;
- var precio=Shop.findOne({_id: compra});
- // selecting the `name` and `occupation` fields
+ var precio=Shop.findOne({producto: compra});
+
 precio.select('precio');
 
 // execute the query at a later time
 precio.exec(function (err, product) {
-  if (err) return handleError(err);
   var cr = req.user.creditos - product.precio;
   User.findByIdAndUpdate(req.user.id, { $set: {"creditos": cr}}, {safe:true, upsert:true}, function(err, model) {console.log(err);});
-
 })
     User.findByIdAndUpdate(req.user.id, { $push: {compras: compra}}, {safe:true, upsert:true}, function(err, model) {console.log(err);});
     res.redirect('/compra');
-
 };
 
 exports.elimina=function(req, res, next) {
@@ -39,9 +36,18 @@ exports.elimina=function(req, res, next) {
        });
 };
 
+exports.modifica=function(req, res, next) {
+ var precio = req.body.precio;
+ var nivel = req.body.nivel;
+
+Shop.findByIdAndUpdate(req.params.compraId, { $set: {"precio": precio}}, {safe:true, upsert:true}, function(err, model) {console.log(err);});
+Shop.findByIdAndUpdate(req.params.compraId, { $set: {"nivel": nivel}}, {safe:true, upsert:true}, function(err, model) {console.log(err);});
+
+res.redirect('/tienda');
+};
+
 exports.add = function(req, res, next) {
         var user = new Shop(req.body);
-        console.log(user);
         var message = null;
         user.save(function(err) {
             if (err) {
@@ -67,7 +73,7 @@ exports.renderTienda = function(req, res, next) {
               tipo: req.user ? req.user.tipo : '',
               nivel: req.user ? req.user.puntos : '',
               credito: req.user ? req.user.creditos : '',
-
+              compras: req.user ? req.user.compras : '',
               "data": shops
           });
         }
