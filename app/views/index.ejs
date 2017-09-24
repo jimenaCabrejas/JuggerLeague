@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link href="css/style.default.css" rel="stylesheet" id="theme-stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+
+
+
+</head>
+
+<body>
+  <!--CABECERA---------------------------->
+  <% include partials/cabecera %>
+
+
+<!--Si hay un usuario conectado-->
+ <% if ( tipo=="administrador" ) { %>
+<!-- BARRA NAVEGACIÓN---------------------------->
+<% include partials/barranav %>
+<div class="container">
+  <div class="row">
+          <div class="heading">
+              <h3>PÁGINA DE PERFIL</h3>
+          </div>
+          <p class="lead">Bienvenido, <%=nombre%>. Aqui están todos los usuarios de la aplicación</p> </br>
+          <p class="lead">Como administrador, puedes ver la información de todos los usuarios participantes en la liga, eliminarlos o validar a los nuevos usuarios</p>
+
+      </div>
+
+
+      <% for(var i=0; i < data.length; i++) { %>
+        <% if ( data[i].tipo=="usuario" || data[i].tipo==null ) { %>
+          <% if( i>=1 ) {%>
+          <% if ( data[i].equipo!=data[i-1].equipo ) { %>
+            <div class="row">
+        <div class="heading">
+            <h4><%=data[i].equipo%></h4> </br>
+            <p class="lead"> Puntuación del equipo: <%=data[i].puntos%> </p>
+            <p class="lead"> Créditos del equipo: <%=data[i].creditos%> </p>
+            <p class="lead"> Usuarios del equipo: </p>
+
+        </div></div>
+         <% } %>
+         <%} else {%>
+           <div class="row">
+       <div class="heading">
+           <h4><%=data[i].equipo%></h4> </br>
+           <p class="lead"> Puntuación del equipo: <%=data[i].puntos%> </p>
+           <p class="lead"> Créditos del equipo: <%=data[i].creditos%> </p>
+           <p class="lead"> Usuarios del equipo: </p>
+
+       </div></div>
+         <% } %>
+                    <div class="box">
+                    <ul class="ul-icons">
+                        <li><i class="fa fa-user"></i><%=data[i].username%></li>
+                        <li><i class="fa fa-envelope"></i><%=data[i].email%></li>
+                        <a href="/eliminar/<%=data[i]._id%>" class="btn btn-template-second btn-sm">Eliminar usuario</a>
+                        <% if ( data[i].tipo==null ) { %>
+                          <a href="/validar/<%=data[i]._id%>" class="btn btn-template-main btn-sm">Validar usuario</a>
+
+                          <% } %>
+                    </ul>
+                  </div>
+
+                   <% } %>
+
+
+                <% } %>
+
+
+      </div>
+
+<% }  %>
+
+<% if ( tipo=="usuario" ) { %>
+<!-- BARRA NAVEGACIÓN---------------------------->
+<% include partials/barranav %>
+<div class="container">
+                <section>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="heading">
+                                <h3>PÁGINA DE PERFIL</h3>
+                            </div>
+                            <p class="lead">¡Hola, <%=nombre%>!</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <ul class="ul-icons">
+                                <li><i class="fa fa-star"></i>Miembro de <%=equipo%></li>
+                                <li><i class="fa fa-envelope"></i>E-mail: <%=email%></li>
+                                <li><i class="fa fa-line-chart"></i>Puntuación de tu equipo: <%=puntos%></li>
+                            </ul>
+                        </div>
+
+                        <div class="col-md-4">
+                            <img class="img-responsive img-circle" alt="" src="http://bilbaodynamics.com/wp-content/uploads/2016/02/MK2_fronto_lateral.jpg">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="heading">
+                                <h4>TABLÓN DE NOTICIAS</h4>
+                            </div>
+                            <p class="lead">Aquí puedes seguir todas las novedades de la liga:</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                      <!--Aquí iría el perfil de Twitter de la liga-->
+                      <a class="twitter-timeline" href="https://twitter.com/BilbaoDynamics">Noticias</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+                    </div>
+                </section>
+
+<% } %>
+
+<% if ( tipo==null ) { %>
+<div class="container">
+  <div class="row">
+      <div class="col-md-9">
+          <div class="heading">
+              <h3>PÁGINA DE PERFIL</h3>
+          </div>
+          <p class="lead">¡Lo siento, <%=nombre%>, tu usuario todavía no ha sido validado!</p>
+      </div>
+  </div>
+
+</div>
+  <% } %>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link href="css/style.default.css" rel="stylesheet" id="theme-stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+
+
+
+</head>
+
+<body>
+
+<!--CABECERA---------------------------->
+  <% include partials/cabecera %>
+
+
+<!--Si hay un usuario conectado-->
+ <% if ( tipo=="administrador" ) { %>
+<!-- BARRA NAVEGACIÓN---------------------------->
+<% include partials/barranav %>
+
+<div class="container">
+    <div class="row">
+      <div class="heading">
+          <h3 class="text-uppercase">Combates</h3>
+      </div>
+    </div>
+    <p class="text-muted lead text-center">
+      Como administrador puede ver y actualizar todos los combates.
+      </p>
+ <div class="box">
+   <p class="lead text-left">
+     Resultados del evento de Bilbao
+   </p>
+
+   <div class="row products text-center">
+     <a href="#" data-toggle="modal" data-target="#add-modal" class="btn btn-template-main"><i class="fa fa-plus"></i>Añadir resultados</a>
+
+     </div>
+       <table class="table table-hover">
+           <thead>
+               <tr>
+                   <th>Equipo Ganador</th>
+                   <th>Equipo Perdedor</th>
+                   <th>Resultado</th>
+               </tr>
+           </thead>
+           <tbody id="prueba">
+           </tbody>
+         </table>
+       </div>
+   </div> </br>
+
+
+   </div>
+
+
+
+    </div>
+
+
+<% }  %>
+
+<% if ( tipo=="usuario" ) { %>
+<!-- BARRA NAVEGACIÓN---------------------------->
+<% include partials/barranav %>
+
+<div class="container">
+    <div class="row">
+      <div class="heading">
+          <h3 class="text-uppercase">Combates</h3>
+      </div>
+    </div>
+    <p class="text-muted lead text-center">
+      Aquí podrás ver tus últimos resultados
+      </p>
+      <table class="table table-hover">
+          <thead>
+              <tr>
+                  <th>Equipo Ganador</th>
+                  <th>Equipo Perdedor</th>
+                  <th>Resultado</th>
+              </tr>
+          </thead>
+          <tbody>
+
+            <% if ( equipo=="Equipo1" ) { %>
+              <tr>
+            <th><span class="label label-info"><%=equipo%></span></th>
+            <th class="text-danger">Equipo2</th>
+            <th>4-1</th>
+          </tr>
+          <tr>
+            <th>Equipo3</th>
+            <th class="text-danger"><span class="label label-info"><%=equipo%></span></th>
+            <th>4-2</th>
+          </tr>
+          <% } %>
+          <% if ( equipo=="Equipo2" ) { %>
+            <tr>
+          <th><span class="label label-info"><%=equipo%></span></th>
+          <th class="text-danger">Equipo1</th>
+          <th>4-1</th>
+        </tr>
+        <tr>
+          <th>Equipo3</th>
+          <th class="text-danger"><span class="label label-info"><%=equipo%></span></th>
+          <th>4-2</th>
+        </tr>
+        <% } %>
+        <% if ( equipo=="Equipo3" ) { %>
+          <tr>
+        <th><span class="label label-info"><%=equipo%></span></th>
+        <th class="text-danger">Equipo2</th>
+        <th>4-1</th>
+      </tr>
+      <tr>
+        <th>Equipo1</th>
+        <th class="text-danger"><span class="label label-info"><%=equipo%></span></th>
+        <th>4-2</th>
+      </tr>
+      <% } %>
+          </tbody>
+        </table>
+      </div>
+  </div> </br>
+    </div>
+<% } %>
+
+<script type="text/javascript">
+function validaForm(theForm) {
+  if(theForm.equipoG.value==theForm.equipoP.value) {
+    alert("Los equipos tienen que ser diferentes");
+  }
+  else {
+    var equipoG=theForm.equipoG.value;
+    var equipoP=theForm.equipoP.value;
+    var resul=theForm.resultado.value;
+    console.log(equipoG);
+    var prueba = document.getElementById("prueba");
+    prueba.innerHTML=prueba.innerHTML + '<tr><th class=\'text-success\'> '+equipoG+'</th> <th class=\'text-danger\'>'+equipoP+'</th> <th>'+resul+'</th></tr>';
+
+  }
+
+};
+</script>
+<!-- *** AÑADIR MODAL ***
+_________________________________________________________ -->
+
+<div class="modal fade" id="add-modal" tabindex="-1" role="dialog" aria-labelledby="Add" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <form class="form-addproduct" action="javascript:;" onsubmit="validaForm(this);">
+              <h2 class="form-signin-heading text-center">Añadir nuevo resultado</h2>
+
+              <div class="form-group">
+                <p class="text-center">Selecciona el equipo ganador del combate</p>
+         <select class="form-control" id="equipo" name="equipoG">
+                <option value="Equipo1">Equipo1</option>
+                <option value="Equipo2">Equipo2</option>
+                <option value="Equipo3">Equipo3</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <p class="text-center">Selecciona el equipo perdedor del combate</p>
+       <select class="form-control" id="equipo" name="equipoP">
+              <option value="Equipo1">Equipo1</option>
+              <option value="Equipo2">Equipo2</option>
+              <option value="Equipo3">Equipo3</option>
+            </select>
+          </div>
+          <input type="text" name="resultado" placeholder="Resultado" required>
+
+
+              <button class="btn btn-lg btn-primary btn-block" type="submit" id="actualizaButton">Actualizar</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</body>
+</html>

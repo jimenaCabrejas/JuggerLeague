@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link href="css/style.default.css" rel="stylesheet" id="theme-stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+
+
+
+</head>
+
+<body>
+
+<!--CABECERA---------------------------->
+  <% include partials/cabecera %>
+
+
+<!--Si hay un usuario conectado-->
+ <% if ( tipo=="administrador" ) { %>
+<!-- BARRA NAVEGACIÓN---------------------------->
+<% include partials/barranav %>
+  <div class="container">
+    <div class="heading">
+      <h3 class="text-uppercase"> Calendario </h3>
+    </div>
+    <p class="lead">Como administrador, puedes consultar todo el calendario y realizar cambios</p>
+
+    <p class="lead">Para añadir eventos visita el siguiente <a href="https://calendar.google.com/calendar/render?pli=1#main_7">link</a></p>
+
+				<iframe src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showPrint=0&amp;mode=AGENDA&amp;height=800&amp;wkst=2&amp;bgcolor=%23FFFFFF&amp;src=juggerleague%40gmail.com&amp;color=%231B887A&amp;ctz=Europe%2FMadrid" style="border-width:0" width="900" height="600" frameborder="0" scrolling="no"></iframe>
+
+</div>
+
+<% }  %>
+
+
+<% if ( tipo=="usuario" ) { %>
+<!-- BARRA NAVEGACIÓN---------------------------->
+<% include partials/barranav %>
+
+<div class="container">
+  <div class="heading">
+    <h3 class="text-uppercase"> Calendario </h3>
+  </div>
+  <p class="lead">Bienvenido a tu calendario, aquí podrás ver los próximos eventos</p>
+			<iframe src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showPrint=0&amp;mode=AGENDA&amp;height=800&amp;wkst=2&amp;bgcolor=%23FFFFFF&amp;src=juggerleague%40gmail.com&amp;color=%231B887A&amp;ctz=Europe%2FMadrid" style="border-width:0" width="900" height="600" frameborder="0" scrolling="no"></iframe>
+
+    </div>
+
+<% } %>
+
+
+</body>
+</html>

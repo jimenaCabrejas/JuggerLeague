@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link href="css/style.default.css" rel="stylesheet" id="theme-stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.8/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.8/addons/p5.dom.js"></script>
+
+
+</head>
+
+<body>
+
+<!--CABECERA---------------------------->
+  <% include partials/cabecera %>
+<!-- BARRA NAVEGACIÓN---------------------------->
+<% include partials/barranav %>
+
+<div class="container">
+  <div class="heading">
+      <h3 class="text-uppercase">Streaming</h3>
+  </div>
+    <div class="text-left">
+        <p class="lead">En esta página podrás compartir tu streaming del evento</p>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-template-main" id="exitButton">Terminar Streaming</button>
+      <!-- El boton para terminar el streaming -->
+    </div>
+    </br>
+    <div class="text-center" id="sketch">
+      <!-- Aqui irá el video -->
+    </div>
+</div>
+  <script>
+    var c;
+    var video;
+    var socket = io.connect('http://localhost:1337');
+    var id = null;
+    var users;
+    var sockets;
+    var userName;
+
+
+    /**Al realizar la conexión se procede a comunicar que se ha conectado
+    *Se comunica que se trata de un emisor
+    **/
+    socket.emit('newConnection', {isEmitter : true , name : '<%=nombre%>'});   //Enviar como name el nombre del usuario
+
+    /**Evento temporal para generar nombres distintos de emisores
+    **/
+    socket.on('userName', function(data){
+      userName = data;
+    });
+
+    /**Con el evento 'updateUsers' se guarda el array de emisores
+    *Puede que no sea necesario jeje
+    **/
+    socket.on('updateUsers',function(data){
+      users = data;
+    });
+
+    /**Estas dos funciones las proporciona p5.js
+    *Sirven para capturar el video y/o audio de la webcam
+    *Si no se pasa ningún parámetro a createCapture() se capturan tanto audio como video
+    *La función draw representa frame a frame, es por eso que se aprovecha para enviarlos con el evento 'sendStream'
+    **/
+    function setup(){
+      c = createCanvas(640,480);
+      c.parent('sketch');
+      video = createCapture(VIDEO);
+      video.size(640,480);
+      video.hide();
+    }
+    function draw(){
+      if(frameRate()> 55){
+        socket.emit('sendStream',{name:userName,capture:c.canvas.toDataURL('image/jpeg', 0.7)});
+      }
+      image(video,0,0,640,480);
+      noFill();
+      strokeWeight(4);
+      beginShape();
+      vertex(0, 0);
+      vertex(640, 0);
+      vertex(640, 480);
+      vertex(0, 480);
+      endShape(CLOSE);
+
+    }
+
+
+    /**Aquí se añade la función a ejecutar cuando se hace click en el botón de Terminar stopStreaming
+    *Envía el evento 'closeConnection' para avisar de que se termina de hacer streaming
+    *Se esperan 100ms para redirigir a la página principal
+    *(Hago esto por que si no me da problemas, no se por que pero no se envía el evento cuando no pongo una pequeña espera)
+    **/
+    document.getElementById("exitButton").onclick = function () {
+      socket.emit('closeConnection',userName);
+      setTimeout(function(){
+              location.href = "http://localhost:1337/perfil";
+      }, 100);
+    };
+
+    /**Función para no permitir que se cierre la página sin darle al botón de terminar streaming
+    **/
+
+  </script>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</body>
+</html>

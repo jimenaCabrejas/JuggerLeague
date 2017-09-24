@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link href="css/style.default.css" rel="stylesheet" id="theme-stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+
+
+</head>
+
+<body>
+
+<% include partials/cabecera %>
+<% include partials/barranav %>
+<% if ( tipo=="administrador" ) { %>
+  <div class="container">
+      <div class="row">
+        <div class="heading">
+            <h3 class="text-uppercase">Tienda</h3>
+        </div>
+      </div>
+      <p class="text-muted lead text-center">
+        Como administrador puede añadir y eliminar productos de la tienda.
+        </p>
+        <div class="row products text-center">
+          <a href="#" data-toggle="modal" data-target="#add-modal" class="btn btn-template-main"><i class="fa fa-plus"></i>Añadir producto</a>
+        </div> </br>
+
+        <div class="row products">
+          <% for(var i=0; i < data.length; i++) { %>
+
+
+            <div class="col-md-3 col-sm-4">
+                <div class="product">
+                    <div class="image">
+                        <a>
+                            <img src='img/<%=data[i].producto%>.jpg' alt="" class="img-responsive image1">
+                        </a>
+                    </div>
+                    <!-- /.image -->
+                    <div class="text">
+                        <h3><a href="#"><%=data[i].producto%></a></h3>
+                        <p class="price"><%=data[i].precio%> créditos</p>
+                    </div>
+                    <!-- /.text -->
+                    <% if ( nivel< data[i].nivel*100 ) { %>
+                    <div class="ribbon sale">
+                        <div class="theribbon">Nivel insuficiente</div>
+                        <div class="ribbon-background"></div>
+                    </div>
+                    <% }  else { %>
+
+                        <a href='/elimina/<%=data[i]._id%>' class="btn btn-template-main"><i class="fa fa-trash"></i>Eliminar</a>
+
+                        <% } %>
+
+                </div>
+                <!-- /.product -->
+            </div>
+            <% } %>
+
+      </div>
+    <!-- /.container -->
+
+</div>
+
+  <% }  %>
+
+
+  <% if ( tipo=="usuario" ) { %>
+    <div class="container">
+        <div class="row">
+          <div class="heading">
+              <h3 class="text-uppercase">Tienda</h3>
+          </div>
+        </div>
+        <p class="text-muted lead text-center">
+          En esta página podrás comprar todas las mejoras para tu robot. Gasta con cabeza, los créditos son limitados</br></br>
+          Tu crédito actual es <%=credito%>
+          </p>
+        <div class="row products">
+          <% for(var i=0; i < data.length; i++) { %>
+
+
+            <div class="col-md-3 col-sm-4">
+                <div class="product">
+                    <div class="image">
+                        <a>
+                            <img src='img/<%=data[i].producto%>.jpg' alt="" class="img-responsive image1">
+                        </a>
+                    </div>
+                    <!-- /.image -->
+                    <div class="text">
+                        <h3><a href="shop-detail.html"><%=data[i].producto%></a></h3>
+                        <p class="price"><%=data[i].precio%> créditos</p>
+                    </div>
+                    <!-- /.text -->
+                    <% if ( nivel< data[i].nivel*100 ) { %>
+                    <div class="ribbon sale">
+                        <div class="theribbon">Nivel insuficiente</div>
+                        <div class="ribbon-background"></div>
+                    </div>
+                    <% }  else { %>
+                      <% if ( credito> data[i].precio ) { %>
+
+                        <a href='/compra/<%=data[i]._id%>' class="btn btn-template-main"><i class="fa fa-shopping-cart"></i>Comprar</a>
+                      <% }  else { %>
+                        <a href="#" data-toggle="modal" data-target="#compra-modal" class="btn btn-template-main"><i class="fa fa-shopping-cart"></i>Comprar</a>
+
+                      <% } %>
+                        <% } %>
+
+                </div>
+                <!-- /.product -->
+            </div>
+            <% } %>
+
+      </div>
+    <!-- /.container -->
+
+</div>
+<% } %>
+
+<!-- /#content -->
+
+<!-- *** COMPRA MODAL ***
+_________________________________________________________ -->
+
+<div class="modal fade" id="compra-modal" tabindex="-1" role="dialog" aria-labelledby="Contact" aria-hidden="true">
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="Contact">Créditos insuficientes</h4>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- *** AÑADIR MODAL ***
+_________________________________________________________ -->
+
+<div class="modal fade" id="add-modal" tabindex="-1" role="dialog" aria-labelledby="Add" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <form class="form-addproduct" action="/add" method="post">
+              <h2 class="form-signin-heading text-center">Añadir nuevo producto</h2>
+
+              <label for="producto" class="sr-only">Producto</label>
+              <input type="text" id="producto" name="producto" class="form-control" placeholder="Nombre producto" required autofocus>
+
+              <label for="precio" class="sr-only">Precio</label>
+              <input type="text" id="precio" name="precio" class="form-control" placeholder="Precio" required autofocus>
+
+              <label for="nivel" class="sr-only">Nivel</label>
+              <input type="text" id="nivel" name="nivel" class="form-control" placeholder="Nivel mínimo" required>
+
+              <button class="btn btn-lg btn-primary btn-block" type="submit">Añadir</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<!-- *** MODIFICA MODAL ***
+_________________________________________________________ -->
+
+<div class="modal fade" id="modify-modal" tabindex="-1" role="dialog" aria-labelledby="Modifica" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+          <form class="form-modificaproducto" action="/modifica" method="post">
+              <h2 class="form-signin-heading text-center">Añadir nuevo producto</h2>
+
+              <label for="producto" class="sr-only">Producto</label>
+              <input type="text" id="producto" name="producto" class="form-control" placeholder="Nombre producto" required autofocus>
+
+              <label for="precio" class="sr-only">Precio</label>
+              <input type="text" id="precio" name="precio" class="form-control" placeholder="Precio" required autofocus>
+
+              <label for="nivel" class="sr-only">Nivel</label>
+              <input type="text" id="nivel" name="nivel" class="form-control" placeholder="Nivel mínimo" required>
+
+              <button class="btn btn-lg btn-primary btn-block" type="submit">Añadir</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</body>
+</html>

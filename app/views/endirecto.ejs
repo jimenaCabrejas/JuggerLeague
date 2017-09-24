@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link href="css/style.default.css" rel="stylesheet" id="theme-stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+
+    <script src='/socket.io/socket.io.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.8/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.8/addons/p5.dom.js"></script>
+
+</head>
+
+<body>
+  <!--CABECERA---------------------------->
+  <% include partials/cabecera %>
+  <div class="container">
+  </br>
+    <div class="heading">
+        <h3 class="text-uppercase">Eventos en directo</h3>
+    </div>
+    <div>
+      <p class="text-muted lead text-left">En esta página podrás visualizar los eventos sin tener que identificarte</p>
+    </div>
+    <div id='all' class='all'>
+      <div id="fullContent" class="fullContent">
+      </div>
+    </div>
+    </div>
+
+      <script>
+        var socket = io.connect('http://localhost:1337');
+        var users;
+        var sockets;
+
+        /**Al realizar la conexión se procede a comunicar que se ha conectado
+        *Se comunica que no se trata de un emisor
+        **/
+        socket.emit('newConnection', {isEmitter : false, name : undefined});
+
+        /**Al recibir el evento 'stopStreaming' se modifica la página para que tenga el aspecto principal
+        *Se añade el div en el cual se van añadiendo los emisores que se conectar
+        **/
+        socket.on('stopStreaming',function(data){
+          var all = document.getElementById("all").innerHTML = "";
+          $( ".all" ).append( '<div id=\'fullContent\' class=\'fullContent\'></div>' );
+        })
+
+        /**Al recibir el evento 'updateUsers' se recoge el array de emisores
+        *Se muestra el nombre de cada emisor seguido de un botón que permite visualizar el streaming
+        **/
+        socket.on('updateUsers',function(data){
+          users = data;
+          var fullContent = document.getElementById("fullContent").innerHTML = "";
+          if(users.length==0) {
+            $( ".fullContent" ).append( "<p class=\"text-danger lead\">Lo sentimos, no hay usuarios retransmitiendo en estos momentos</p>");
+          }
+          if(fullContent!=null){
+            for(var i=0;i<users.length;i++){
+            $( ".fullContent" ).append( "<p class=\"lead\"> Estos son los usuarios retransmitiendo en este momento </p> <button type=\"button\" class=\"btn btn-template-main\" \
+             id=\"" + users[i] + "\" onclick=\"verStreaming\(\'" + users[i] + "\'\)\">Ver streaming de "+users[i]+"</button>");
+            }
+          }
+        });
+
+        /**Función para activar la visualización del streaming
+        *Se añade un <img> para representar los frames recibidos
+        **/
+        function verStreaming(name){
+          var all = document.getElementById("all").innerHTML = "";
+          $( ".all" ).append( '<center> <img width=\"60%\" heigth=\"60%\" id=\"stream\" \/> </center>' );
+        }
+
+        /**Con el evento 'sendStream' se recogerá cada frame recibido y se representará en el <img> creado
+        *Si el <img> no existe (es null), no se realizará nada
+        *Esto ocurre cuando no se ha pulsado el botón de stream
+        **/
+        socket.on('sendStream',function(data){
+          var stream = document.getElementById('stream');
+          if(stream!=null){
+            stream.src = data.capture;
+          }
+        });
+
+      </script>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</body>
+</html>

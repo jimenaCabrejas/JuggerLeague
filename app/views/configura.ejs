@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link href="css/style.default.css" rel="stylesheet" id="theme-stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+
+
+
+</head>
+
+<body>
+<% include partials/cabecera %>
+<% include partials/barranav %>
+
+
+        <div class="col-md-9 clearfix" id="customer-account">
+            <p class="lead">En esta página podrás cambiar tus datos personales</p>
+            <div class="box">
+
+                <div class="heading">
+                    <h3 class="text-uppercase">Cambiar contraseña</h3>
+                </div>
+
+                <form action="/config" method="post" name="fvalida">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="password">Nueva contraseña</label>
+                                <input type="password" class="form-control" name="password_1" required>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="password_2">Repite nueva contraseña</label>
+                                <input type="password" class="form-control" name="password_2" required>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.row -->
+                    <div class="text-center">
+                      <i class="fa fa-paper-planes"></i> <input type="button" class="btn btn-template-main" value="Guardar cambios" onclick="valida_envia()">
+                    </div>
+                </form>
+
+            </div>
+            <!-- /.box -->
+
+            <script>
+            function valida_envia(){
+               	//valido el nombre
+               	if (document.fvalida.password_1.value !=document.fvalida.password_2.value){
+                    alert("Las dos contraseñas tienen que coincidir")
+                  	return 0;
+               	}
+
+               	//el formulario se envia
+                if (confirm("¿Seguro que quieres actualizar la contraseña?") == true) {
+                  document.fvalida.submit();
+
+                } else {
+                    return 0
+                   }
+            }
+            </script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</body>
+</html>

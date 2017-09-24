@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,500,700,800' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <link href="css/style.default.css" rel="stylesheet" id="theme-stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+
+
+
+</head>
+
+<body>
+
+  <!--CABECERA---------------------------->
+    <% include partials/cabecera %>
+
+  <!--Página de CLASIFICACIÓN - muestra los equipos participantes en orden
+  descendente según sus puntuaciones en la liga -->
+  <!-- BARRA NAVEGACIÓN---------------------------->
+  <% include partials/barranav %>
+
+  <div class="container">
+
+         <div class="col-md-9">
+           <div class="heading">
+               <h3 class="text-uppercase">Clasificación</h3>
+           </div>
+           <p class="lead">En esta página podrás ver cómo va tu equipo en la liga</p>
+
+
+                          <p class="text-muted lead">Tabla de clasificación</p>
+
+                          <div class="box">
+
+                              <div class="table-responsive">
+                                  <table class="table table-hover">
+                                      <thead>
+                                          <tr>
+                                              <th>Posición</th>
+                                              <th>Equipo</th>
+                                              <th>Puntuación</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                        <% var pos=1; %>
+                                        <% for(var i=0; i < data.length; i++) { %>
+                                          <!--Sólo se tienen en cuenta los usuarios participantes-->
+                                          <% if ( data[i].tipo=="usuario" ) { %>
+                                          <tr>
+                                              <% if ( i==0 ) { %> <!-- Si es la primera entrada de la lista = primera posición del ranking -->
+                                                <!-- POSICIÓN -->
+                                                <th># 1</th>
+
+                                                <!-- EQUIPO -->
+                                                <% if ( equipo==data[i].equipo ) { %>
+                                                  <!--Destacar el nombre del equipo al que pertenece el usuario-->
+                                                  <td><span class="label label-info"><%=data[i].equipo%></span>
+                                                  </td>
+                                                <% }  else { %>
+                                                  <td><%=data[i].equipo%></td>
+                                                <% } %>
+
+                                                <!-- PUNTUACIÓN -->
+                                                <td><%=data[i].puntos%></td>
+                                              <% } else { %> <!-- Para el resto de entradas -->
+                                                <% if ( data[i].equipo !=  data[i-1].equipo) { %>
+                                                  <% if ( data[i-1].puntos > data[i].puntos ) { %>
+                                                    <% pos++;%> <!-- Si el siguiente usuario tiene una puntuación menor, está en la siguiente posición del ranking-->
+                                                    <% } %>
+                                                    <!-- POSICIÓN -->
+                                                    <th># <%=pos%></th>
+
+                                                    <!-- EQUIPO -->
+                                                    <% if ( equipo==data[i].equipo ) { %>
+                                                      <!--Destacar el nombre del equipo al que pertenece el usuario-->
+                                                      <td><span class="label label-info"><%=data[i].equipo%></span>
+                                                      </td>
+                                                    <% }  else { %>
+                                                      <td><%=data[i].equipo%></td>
+                                                    <% } %>
+
+                                                    <!-- PUNTUACIÓN -->
+                                                    <td><%=data[i].puntos%></td>
+                                                  <% } %>
+                                              <% } %>
+                                          </tr>
+                                          <% } %>
+                                        <% } %>
+                                      </tbody>
+                                  </table>
+                              </div>
+                              <!-- /.table-responsive -->
+
+                          </div>
+                          <!-- /.box -->
+
+            </div>
+                      <!-- /.col-md-9 -->
+                    </div>
+                    <!-- /.container -->
+
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  </body>
+  </html>
