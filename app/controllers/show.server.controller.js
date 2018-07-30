@@ -26,6 +26,21 @@ exports.renderStreaming = function(req, res, next) {
     }
 };
 
+
+exports.renderCombatZone = function(req, res, next) {
+    if (req.user) {
+        res.render('combatzone', {
+            title: 'Zona de Combate',
+            tipo: req.user ? req.user.tipo : '',
+            nombre : req.user ? req.user.username : ''
+        });
+    }
+    else {
+        return res.redirect('/');
+    }
+};
+
+
 exports.renderCombates = function(req, res, next) {
   User.find({}, null, {sort: { equipo: -1 }}, function(err, users) {
       if (err) {

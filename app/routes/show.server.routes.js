@@ -16,6 +16,9 @@ module.exports = function(app) {
 	app.route('/endirecto')
 		.get(show.renderEnDirecto);
 
+    app.route('/combatzone')
+      .get(show.renderCombatZone);
+
 
 
 };
